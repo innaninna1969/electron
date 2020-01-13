@@ -126,9 +126,10 @@ Clears the session’s HTTP cache.
     `scheme://host:port`.
   * `storages` String[] (optional) - The types of storages to clear, can contain:
     `appcache`, `cookies`, `filesystem`, `indexdb`, `localstorage`,
-    `shadercache`, `websql`, `serviceworkers`, `cachestorage`.
+    `shadercache`, `websql`, `serviceworkers`, `cachestorage`. If not
+    specified, clear all storage types.
   * `quotas` String[] (optional) - The types of quotas to clear, can contain:
-    `temporary`, `persistent`, `syncable`.
+    `temporary`, `persistent`, `syncable`. If not specified, clear all quotas.
 
 Returns `Promise<void>` - resolves when the storage data has been cleared.
 
@@ -518,12 +519,12 @@ A [`Protocol`](protocol.md) object for this session.
 const { app, session } = require('electron')
 const path = require('path')
 
-app.on('ready', function () {
+app.on('ready', () => {
   const protocol = session.fromPartition('some-partition').protocol
-  protocol.registerFileProtocol('atom', function (request, callback) {
-    var url = request.url.substr(7)
+  protocol.registerFileProtocol('atom', (request, callback) => {
+    let url = request.url.substr(7)
     callback({ path: path.normalize(`${__dirname}/${url}`) })
-  }, function (error) {
+  }, (error) => {
     if (error) console.error('Failed to register protocol')
   })
 })
@@ -536,7 +537,7 @@ A [`NetLog`](net-log.md) object for this session.
 ```javascript
 const { app, session } = require('electron')
 
-app.on('ready', async function () {
+app.on('ready', async () => {
   const netLog = session.fromPartition('some-partition').netLog
   netLog.startLogging('/path/to/net-log')
   // After some network events
